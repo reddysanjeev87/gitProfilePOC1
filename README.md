@@ -1,6 +1,6 @@
 # Git Hub Users Repository
 
-This document describes the **project assignment** for the **Git Hub Users Repository** in ASP.NET MVC.
+This document describes the **project assignment** for the **Git Hub Users Repository** in ASP.NET MVC (.NET 6.0).
 
 ## How to use
 
