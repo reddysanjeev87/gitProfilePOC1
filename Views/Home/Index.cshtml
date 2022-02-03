@@ -1,0 +1,112 @@
+﻿@model GitUserProfile
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row justify-content-center">
+    <div class="col-4">
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "row g-3" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <div class="col-auto">
+                @Html.TextBox("username", "", new { @class = "form-control d-inline", @placeholder = "Username" })
+            </div>
+            <div class="col-auto">
+                <input type="submit" class="btn btn-primary d-inline" value="Submit" />
+            </div>
+        }
+    </div>
+</div>
+@if (Model.httpStatus == System.Net.HttpStatusCode.OK)
+{
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="col-auto">
+                <div class="card mt-5" style="width: 18rem;">
+                    <img src="@Model.avatar_url" class="card-img-top" alt="avatar">
+                    <div class="card-body">
+                        <h5 class="card-title">@Model.name</h5>
+                        @if (!string.IsNullOrEmpty(@Model.location))
+                        {
+                            <p class="card-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+                                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                </svg>
+                                @Model.location
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.repos != null && Model.repos.Count > 0)
+        {
+            <div class="col-4">
+                <div class="col-auto mt-5">
+                    <ol class="list-group">
+                        @foreach (var item in Model.repos)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold"><a href="@item.html_url" target="_blank">@item.name</a></div>
+                                    @item.description
+                                </div>
+                                <span class="badge bg-primary rounded-pill">@item.stargazers_count</span>
+                            </li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-4">
+                <div class="col-auto mt-5">
+                    <div class="alert alert-danger" role="alert">
+                        @Model.name doesn't have any public repositories yet.
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else if(Model.httpStatus == System.Net.HttpStatusCode.NotFound)
+{
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="col-auto mt-5">
+                <div class="alert alert-danger" role="alert">
+                    Search result not found.
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if(Model.httpStatus == System.Net.HttpStatusCode.Forbidden)
+{
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="col-auto mt-5">
+                <div class="alert alert-danger" role="alert">
+                    Request rate limit exceeded.
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if(Model.httpStatus != 0)
+{
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="col-auto mt-5">
+                <div class="alert alert-danger" role="alert">
+                    Something went wrong, please try again later.
+                </div>
+            </div>
+        </div>
+    </div>
+}
